@@ -43,8 +43,16 @@ then
     else
         RASPICAM_BITRATE=$RS_RASPICAM_BITRATE
     fi
+    
+    
+    if [ "$RS_RASPICAM_HFLIP" = "" ]
+    then
+        RASPICAM_HLIP=
+    else
+        RASPICAM_HLIP==-hf
+    fi
 
-    /opt/vc/bin/raspivid -t 0 -w $RASPICAM_WIDTH -h $RASPICAM_HEIGHT -fps $RASPICAM_FPS -b $RASPICAM_BITRATE -o - | ffmpeg -i - -f lavfi -i aevalsrc=0 -vcodec copy -acodec aac -strict experimental -map 0:0 -map 1:0 -shortest -flags +global_header -f flv rtmp://127.0.0.1:1935/live/raspicam.stream > /dev/null 2>&1
+    /opt/vc/bin/raspivid -t 0 -w $RASPICAM_WIDTH -h $RASPICAM_HEIGHT -fps $RASPICAM_FPS -b $RASPICAM_BITRATE $RASPICAM_HLIP -o - | ffmpeg -i - -f lavfi -i aevalsrc=0 -vcodec copy -acodec aac -strict experimental -map 0:0 -map 1:0 -shortest -flags +global_header -f flv rtmp://127.0.0.1:1935/live/raspicam.stream > /dev/null 2>&1
 elif [ "${MODE}" == "USBCAM" ];
 then
     apt-get update && apt-get install -y v4l-utils libv4l-0
